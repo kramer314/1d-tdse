@@ -8,37 +8,53 @@ module propagate
 
   implicit none
 
+  complex(dp), allocatable :: exp_pot_arr(:), diag_arr(:)
+  complex(dp) :: sym_cnst
+  
   private
   public :: cn_splitop
   public :: init_propagate
+  public :: cleanup_propagate
   
 contains
 
+  ! Initialize propagation variables / arrays
   subroutine init_propagate()
-    
     implicit none
+    
     allocate(diag_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
     sym_cnst = - (j * dt) / (8.0_dp * dx**2)
     diag_arr(:) = (0.5_dp - 2.0_dp * sym_cnst)
     exp_pot_arr(:) = exp(-j * pot_arr(:) * dt)
+
   end subroutine init_propagate
+
+  ! Cleanup propagation arrays
+  subroutine cleanup_propagate()
+    implicit none
+
+    deallocate(diag_arr)
+    deallocate(exp_pot_arr)
+  end subroutine cleanup_propagate
   
-  ! Crank-Nicholson propagation
+  ! Crank-Nicolson propagation
   subroutine cn_propagate(psi_arr)
     implicit none
+    
     complex(dp), intent(inout) :: psi_arr(:)
 
-    ! Solve for auxillary wavefunction
+    ! Solve for auxillary wavefunction, then propagate
     call tridiag_sym_cnst(diag_arr, sym_cnst, psi_arr, phi_arr)
-    ! Propagated wavefunction
     psi_arr(:) = phi_arr(:) - psi_arr(:)
 
   end subroutine cn_propagate
 
+  ! One-dimensional Crank-Nicolson split-operator propagation
   subroutine cn_splitop(psi_arr)
     implicit none
+
     complex(dp), intent(inout) :: psi_arr(:)
 
     psi_arr(:) = exp_pot_arr(:) * psi_arr(:)

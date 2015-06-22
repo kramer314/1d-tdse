@@ -6,7 +6,7 @@ module setup
   use progvars
   use params, only: assign_params, psi0, pot
   use numerics, only: linspace
-  use propagate, only: init_propagate
+  use propagate, only: init_propagate, cleanup_propagate
 
   implicit none
 
@@ -17,40 +17,59 @@ contains
   ! Public pre-execution routine
   subroutine init()
     implicit none
+
     call assign_params
     call allocate_arrays
     call init_grids
     call init_psi
     call init_pot
     call init_propagate
+
   end subroutine init
 
   ! Public post-execution routine
   subroutine cleanup()
     implicit none
-    deallocate(x_range, psi_arr, phi_arr, pot_arr, t_range)
+
+    call deallocate_arrays
+    call cleanup_propagate
+
   end subroutine cleanup
   
   ! Allocate arrays
   subroutine allocate_arrays()
     implicit none
+
     allocate(x_range(n_x))
     allocate(psi_arr(n_x))
     allocate(pot_arr(n_x))
     allocate(phi_arr(n_x))
     allocate(t_range(n_t))
+
   end subroutine allocate_arrays
 
+  ! Deallocate arrays
+  subroutine deallocate_arrays()
+    implicit none
+    
+    deallocate(x_range)
+    deallocate(t_range)
+    deallocate(psi_arr)
+    deallocate(pot_arr)
+
+  end subroutine deallocate_arrays
+  
   ! Setup numerical grids
-  subroutine init_grids
+  subroutine init_grids()
     implicit none
 
     call linspace(x_min, x_max, x_range, dx)
     call linspace(t_min, t_max, t_range, dt)
+
   end subroutine init_grids
 
   ! Initialize psi(x, t = 0)
-  subroutine init_psi
+  subroutine init_psi()
     implicit none
 
     real(dp) :: x
@@ -64,7 +83,7 @@ contains
   end subroutine init_psi
 
   ! Initialize potential V(x)
-  subroutine init_pot
+  subroutine init_pot()
     implicit none
 
     real(dp) :: x
@@ -74,5 +93,6 @@ contains
        x = x_range(i_x)
        pot_arr(i_x) = pot(x)
     end do
+    
   end subroutine init_pot
 end module setup

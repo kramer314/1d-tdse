@@ -49,7 +49,8 @@ contains
 
     norm = (pi * d_x**2) ** (-1.0_dp / 4.0_dp)
     val = norm * exp(-0.5_dp * ((x - x_0) / d_x)**2) * exp(j * k_0 * x)
-  end function
+
+  end function psi0
 
   ! Potential energy function (time independent)
   complex(dp) function pot(x) result(val)

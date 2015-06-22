@@ -14,16 +14,12 @@ module progvars
   real(dp), parameter :: e = exp(1.0_dp)
   complex(dp), parameter :: j = (0.0_dp, 1.0_dp)
 
+  ! Grid parameters
   real(dp) :: x_min, x_max, dx, t_min, t_max, dt
   integer(dp) :: n_x, n_t
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)
   complex(dp), allocatable :: psi_arr(:), phi_arr(:), pot_arr(:)
-
-  ! Propagation variables
-  complex(dp), allocatable :: exp_pot_arr(:), diag_arr(:)
-  complex(dp) :: sym_cnst
-
 
 end module progvars
