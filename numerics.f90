@@ -9,16 +9,16 @@ module numerics
 
   private
 
-  public :: linspace
-  public :: norm
-  public :: expec_x
-  public :: expec_x2
-  public :: stdev_x
+  public :: numerics_linspace
+  public :: numerics_norm
+  public :: numerics_expec_x
+  public :: numerics_expec_x2
+  public :: numerics_stdev_x
 
 contains
 
   ! Populate an array with linearly-spaced values between x_min and x_max
-  subroutine linspace(x_min, x_max, x_arr, dx)
+  subroutine numerics_linspace(x_min, x_max, x_arr, dx)
     implicit none
 
     real(dp), intent(in) :: x_min, x_max
@@ -34,10 +34,10 @@ contains
        x_arr(i_x) = x_min + i_x * dx
     end do
 
-  end subroutine linspace
+  end subroutine numerics_linspace
 
   ! Calculate <psi | psi> = ||psi||^2
-  real(dp) function norm(psi_arr) result(val)
+  real(dp) function numerics_norm(psi_arr) result(val)
     implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
@@ -47,10 +47,10 @@ contains
     do i_x = 1, n_x
        val = val + abs(psi_arr(i_x))**2 * dx
     end do
-  end function norm
+  end function numerics_norm
 
   ! Calculate <x>
-  real(dp) function expec_x(psi_arr) result(val)
+  real(dp) function numerics_expec_x(psi_arr) result(val)
     implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
@@ -63,10 +63,10 @@ contains
        val = val + abs(psi_arr(i_x))**2 * x * dx
     end do
 
-  end function expec_x
+  end function numerics_expec_x
 
   ! Calculate <x^2>
-  real(dp) function expec_x2(psi_arr) result(val)
+  real(dp) function numerics_expec_x2(psi_arr) result(val)
     implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
@@ -79,17 +79,17 @@ contains
        val = val + abs(psi_arr(i_x))**2 * x**2 * dx
     end do
 
-  end function expec_x2
+  end function numerics_expec_x2
 
   ! Calculate stdev(x)
-  real(dp) function stdev_x(psi_arr) result(val)
+  real(dp) function numerics_stdev_x(psi_arr) result(val)
     implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
 
     ! todo: optimize so loops aren't repeated
-    val = sqrt(expec_x2(psi_arr) - expec_x(psi_arr)**2)
+    val = sqrt(numerics_expec_x2(psi_arr) - numerics_expec_x(psi_arr)**2)
 
-  end function stdev_x
+  end function numerics_stdev_x
 
 end module numerics

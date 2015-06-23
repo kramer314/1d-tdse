@@ -5,7 +5,8 @@
 module setup
   use progvars
   use params, only: params_init, params_psi0, params_pot
-  use numerics, only: linspace
+  use numerics, only: numerics_linspace
+  use output, only: output_init, output_cleanup
   use propagate, only: propagate_init, propagate_cleanup
   use tridiag, only: tridiag_init, tridiag_cleanup
 
@@ -21,6 +22,7 @@ contains
     implicit none
 
     call params_init
+    call output_init
     call allocate_arrays
     call setup_grids
     call setup_psi
@@ -33,6 +35,7 @@ contains
   subroutine setup_cleanup()
     implicit none
 
+    call output_cleanup
     call deallocate_arrays
     call propagate_cleanup
     call tridiag_cleanup(tridiag_mat_coeff, tridiag_vec_coeff)
@@ -66,8 +69,8 @@ contains
   subroutine setup_grids()
     implicit none
 
-    call linspace(x_min, x_max, x_range, dx)
-    call linspace(t_min, t_max, t_range, dt)
+    call numerics_linspace(x_min, x_max, x_range, dx)
+    call numerics_linspace(t_min, t_max, t_range, dt)
 
   end subroutine setup_grids
 

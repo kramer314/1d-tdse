@@ -3,7 +3,7 @@
 
 ! Methods for solving tridiagonal systems
 module tridiag
-  use progvars
+  use progvars, only: dp
 
   implicit none
 

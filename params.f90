@@ -38,6 +38,20 @@ contains
     d_x = 1.0_dp
     k_0 = 10.0_dp
 
+    ! output parameters
+    output_dir = "./output/"
+    x_range_fname = "xrange.dat"
+    t_range_fname = "trange.dat"
+    psi0_fname = "psi0.dat"
+    pot_fname = "pot.dat"
+    wfunc_math_fname = "wfunc_math.dat"
+    psi_xt_fname = "psi_xt.dat"
+
+    output_grids = .true.
+    output_psi0 = .true.
+    output_pot = .true.
+    output_wfunc_math = .true.
+
   end subroutine params_init
 
   ! Initial wavefunction
