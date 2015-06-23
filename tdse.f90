@@ -21,7 +21,7 @@ program tdse
   open(unit=6, file="pot.dat")
 
   do i_x = 1, n_x
-     write(1, dp_format) real(psi_arr(i_x))**2
+     write(1, dp_format) abs(psi_arr(i_x))**2
      write(6, dp_format) real(pot_arr(i_x))
      write(2, dp_format, advance="no") abs(psi_arr(i_x))**2
   end do
