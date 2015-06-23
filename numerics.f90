@@ -12,6 +12,8 @@ module numerics
   public :: linspace
   public :: norm
   public :: expec_x
+  public :: expec_x2
+  public :: stdev_x
 
 contains
 
@@ -63,4 +65,31 @@ contains
     
   end function expec_x
 
+  ! Calculate <x^2>
+  real(dp) function expec_x2(psi_arr) result(val)
+    implicit none
+
+    complex(dp), intent(in) :: psi_arr(:)
+    real(dp) :: x
+    integer(dp) :: i_x
+
+    val = 0.0_dp
+    do i_x = 1, n_x
+       x = x_range(i_x)
+       val = val + abs(psi_arr(i_x))**2 * x**2 * dx
+    end do
+    
+  end function expec_x2
+
+  ! Calculate stdev(x)
+  real(dp) function stdev_x(psi_arr) result(val)
+    implicit none
+
+    complex(dp), intent(in) :: psi_arr(:)
+
+    ! todo: optimize so loops aren't repeated
+    val = sqrt(expec_x2(psi_arr) - expec_x(psi_arr)**2)
+    
+  end function stdev_x
+  
 end module numerics
