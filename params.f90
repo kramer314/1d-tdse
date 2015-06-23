@@ -8,9 +8,9 @@ module params
   implicit none
 
   private
-  public :: assign_params
-  public :: psi0
-  public :: pot
+  public :: params_init
+  public :: params_psi0
+  public :: params_pot
 
   ! Problem specific variables
   real(dp) :: x_0, d_x, k_0
@@ -18,7 +18,7 @@ module params
 contains
 
   ! Assign parameters
-  subroutine assign_params()
+  subroutine params_init()
     implicit none
 
     ! Grid parameters
@@ -38,10 +38,10 @@ contains
     d_x = 1.0_dp
     k_0 = 10.0_dp
     
-  end subroutine assign_params
+  end subroutine params_init
 
   ! Initial wavefunction
-  complex(dp) function psi0(x) result(val)
+  complex(dp) function params_psi0(x) result(val)
     implicit none
 
     real(dp), intent(in) :: x
@@ -50,10 +50,10 @@ contains
     norm = (pi * d_x**2) ** (-1.0_dp / 4.0_dp)
     val = norm * exp(-0.5_dp * ((x - x_0) / d_x)**2) * exp(j * k_0 * x)
 
-  end function psi0
+  end function params_psi0
 
   ! Potential energy function (time independent)
-  complex(dp) function pot(x) result(val)
+  complex(dp) function params_pot(x) result(val)
     implicit none
     real(dp), intent(in) :: x
 
@@ -61,6 +61,6 @@ contains
 
     val = 10_dp * x**2
 
-  end function pot
+  end function params_pot
   
 end module params

@@ -4,37 +4,40 @@
 ! Initialization module
 module setup
   use progvars
-  use params, only: assign_params, psi0, pot
+  use params, only: params_init, params_psi0, params_pot
   use numerics, only: linspace
-  use propagate, only: init_propagate, cleanup_propagate
+  use propagate, only: propagate_init, propagate_cleanup
+  use tridiag, only: tridiag_init, tridiag_cleanup
 
   implicit none
 
   private
-  public :: init, cleanup
+  public :: setup_init
+  public :: setup_cleanup
 
 contains
   ! Public pre-execution routine
-  subroutine init()
+  subroutine setup_init()
     implicit none
 
-    call assign_params
+    call params_init
     call allocate_arrays
-    call init_grids
-    call init_psi
-    call init_pot
-    call init_propagate
-
-  end subroutine init
+    call setup_grids
+    call setup_psi
+    call setup_potential
+    call propagate_init
+    call tridiag_init(n_x, tridiag_mat_coeff, tridiag_vec_coeff)
+  end subroutine setup_init
 
   ! Public post-execution routine
-  subroutine cleanup()
+  subroutine setup_cleanup()
     implicit none
 
     call deallocate_arrays
-    call cleanup_propagate
+    call propagate_cleanup
+    call tridiag_cleanup(tridiag_mat_coeff, tridiag_vec_coeff)
 
-  end subroutine cleanup
+  end subroutine setup_cleanup
   
   ! Allocate arrays
   subroutine allocate_arrays()
@@ -60,16 +63,16 @@ contains
   end subroutine deallocate_arrays
   
   ! Setup numerical grids
-  subroutine init_grids()
+  subroutine setup_grids()
     implicit none
 
     call linspace(x_min, x_max, x_range, dx)
     call linspace(t_min, t_max, t_range, dt)
 
-  end subroutine init_grids
+  end subroutine setup_grids
 
   ! Initialize psi(x, t = 0)
-  subroutine init_psi()
+  subroutine setup_psi()
     implicit none
 
     real(dp) :: x
@@ -77,13 +80,13 @@ contains
 
     do i_x = 1, n_x
        x = x_range(i_x)
-       psi_arr(i_x) = psi0(x)
+       psi_arr(i_x) = params_psi0(x)
     end do
 
-  end subroutine init_psi
+  end subroutine setup_psi
 
   ! Initialize potential V(x)
-  subroutine init_pot()
+  subroutine setup_potential()
     implicit none
 
     real(dp) :: x
@@ -91,8 +94,9 @@ contains
 
     do i_x = 1, n_x
        x = x_range(i_x)
-       pot_arr(i_x) = pot(x)
+       pot_arr(i_x) = params_pot(x)
     end do
     
-  end subroutine init_pot
+  end subroutine setup_potential
+  
 end module setup

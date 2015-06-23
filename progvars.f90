@@ -22,4 +22,6 @@ module progvars
   real(dp), allocatable :: x_range(:), t_range(:)
   complex(dp), allocatable :: psi_arr(:), phi_arr(:), pot_arr(:)
 
+  ! Work arrays for tridiagonal solver
+  complex(dp), allocatable :: tridiag_mat_coeff(:), tridiag_vec_coeff(:)
 end module progvars

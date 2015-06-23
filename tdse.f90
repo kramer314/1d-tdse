@@ -3,15 +3,15 @@
 
 program tdse
   use progvars
-  use setup, only: init, cleanup
-  use propagate, only: cn_splitop
+  use setup, only: setup_init, setup_cleanup
+  use propagate, only: propagate_cn_splitop
   use numerics, only: norm, expec_x
   
   implicit none
 
   integer(dp) :: i_x, i_t
 
-  call init
+  call setup_init
 
   open(unit=1, file="psi0.dat")
   open(unit=2, file="psit.dat")
@@ -27,7 +27,7 @@ program tdse
   write(2,*)
   
   do i_t = 1, n_t
-     call cn_splitop(psi_arr)
+     call propagate_cn_splitop(psi_arr)
      write(3, dp_format) norm(psi_arr)
      write(4, dp_format) expec_x(psi_arr)
      do i_x = 1, n_x
@@ -36,7 +36,7 @@ program tdse
      write(2,*)
   end do
   
-  call cleanup
+  call setup_cleanup
   
   close(unit=1)
   close(unit=2)
