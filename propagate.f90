@@ -4,12 +4,12 @@
 ! Wavefunction propagation
 module propagate
   use progvars
-  use tridiag, only: tridiag_sym_cnst
+  use tridiag, only: tridiag_cnst
 
   implicit none
 
-  complex(dp), allocatable :: exp_pot_arr(:), diag_arr(:)
-  complex(dp) :: sym_cnst
+  complex(dp), allocatable :: exp_pot_arr(:)
+  complex(dp) :: sym_cnst, diag_cnst
 
   private
   public :: propagate_init
@@ -22,11 +22,10 @@ contains
   subroutine propagate_init()
     implicit none
 
-    allocate(diag_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
     sym_cnst = - (j * dt) / (8.0_dp * dx**2)
-    diag_arr(:) = (0.5_dp - 2.0_dp * sym_cnst)
+    diag_cnst = (0.5_dp - 2.0_dp * sym_cnst)
     exp_pot_arr(:) = exp(-j * pot_arr(:) * dt)
 
   end subroutine propagate_init
@@ -35,7 +34,6 @@ contains
   subroutine propagate_cleanup()
     implicit none
 
-    deallocate(diag_arr)
     deallocate(exp_pot_arr)
   end subroutine propagate_cleanup
 
@@ -46,7 +44,7 @@ contains
     complex(dp), intent(inout) :: psi_arr(:)
 
     ! Solve for auxillary wavefunction, then propagate
-    call tridiag_sym_cnst(diag_arr, sym_cnst, psi_arr, phi_arr, &
+    call tridiag_cnst(diag_cnst, sym_cnst, sym_cnst, psi_arr, phi_arr, &
          tridiag_mat_coeff, tridiag_vec_coeff)
     psi_arr(:) = phi_arr(:) - psi_arr(:)
 

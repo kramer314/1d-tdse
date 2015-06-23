@@ -1,21 +1,21 @@
 ! Copyright (c) 2015 Alex Kramer <alkramer@phys.ksu.edu>
 ! See the LICENSE.txt file in the top-level directory of this distribution
 
-! Methods for solving tridiagonal systems
+! Methods for solving tridiagonal systems using the Thomas algorithm
 module tridiag
   use progvars, only: dp
 
   implicit none
 
   private
-  public :: tridiag_sym_cnst
+  public :: tridiag_general
+  public :: tridiag_cnst
   public :: tridiag_init
   public :: tridiag_cleanup
 
 contains
 
-  ! Initialize tridiagonal solver
-  ! Allocates work arrays for Thomas algorithm
+  ! Initialize tridiagonal solver work arrays
   subroutine tridiag_init(n, mat_coeff, vec_coeff)
     implicit none
 
@@ -56,14 +56,12 @@ contains
 
   end subroutine tridiag_backsweep
 
-  ! Solves an n-dimensional tridiagional matrix equation A x = b, where the
-  ! upper and lower diagional matrix elements are equal and constant.
-  ! This uses a simplified version of the Thomas algorithm for a general
-  ! n-dimensional tridiagonal system.
-  subroutine tridiag_sym_cnst(diag, sym_cnst, vec, res, mat_coeff, vec_coeff)
+  ! Solves an n-dimensional tridiagional matrix equation A x = b.
+  subroutine tridiag_general(diag, u_diag, l_diag, vec, res, &
+       mat_coeff, vec_coeff)
     implicit none
 
-    complex(dp), intent(in) :: diag(:), sym_cnst, vec(:)
+    complex(dp), intent(in) :: diag(:), u_diag(:), l_diag(:), vec(:)
     complex(dp), intent(inout) :: mat_coeff(:), vec_coeff(:)
     complex(dp), intent(out) :: res(:)
 
@@ -72,20 +70,52 @@ contains
     n = size(res)
 
     ! Forward sweep
-    mat_coeff(1) = sym_cnst / diag(1)
+    mat_coeff(1) = u_diag(1) / diag(1)
     vec_coeff(1) = vec(1) / diag(1)
 
     do i = 2, n - 1
-       mat_coeff(i) = sym_cnst / (diag(i) - sym_cnst * mat_coeff(i - 1))
-       vec_coeff(i) = (vec(i) - sym_cnst * vec_coeff(i - 1)) / &
-            (diag(i) - sym_cnst * mat_coeff(i - 1))
+       mat_coeff(i) = u_diag(i) / (diag(i) - l_diag(i) * mat_coeff(i - 1))
+       vec_coeff(i) = (vec(i) - l_diag(i) * vec_coeff(i - 1)) / &
+            (diag(i) - l_diag(i) * mat_coeff(i - 1))
     end do
 
-    vec_coeff(n) = (vec(n) - sym_cnst * vec_coeff(n - 1)) / &
-         (diag(n) - sym_cnst * mat_coeff(n - 1))
+    vec_coeff(n) = (vec(n) - l_diag(n) * vec_coeff(n - 1)) / &
+         (diag(n) - l_diag(n) * mat_coeff(n - 1))
 
     ! Backward sweep
     call tridiag_backsweep(res, mat_coeff, vec_coeff)
 
-  end subroutine
+  end subroutine tridiag_general
+
+  ! Solves an n-dimensional tridiagional matrix equation A x = b, where the
+  ! band elements are constant.
+  subroutine tridiag_cnst(diag_cnst, u_diag_cnst, l_diag_cnst, vec, res, &
+       mat_coeff, vec_coeff)
+    implicit none
+
+    complex(dp), intent(in) :: diag_cnst, u_diag_cnst, l_diag_cnst, vec(:)
+    complex(dp), intent(inout) :: mat_coeff(:), vec_coeff(:)
+    complex(dp), intent(out) :: res(:)
+
+    integer(dp) :: i, n
+
+    n = size(res)
+
+    ! Forward sweep
+    mat_coeff(1) = u_diag_cnst / diag_cnst
+    vec_coeff(1) = vec(1) / diag_cnst
+
+    do i = 2, n -1
+       mat_coeff(i) = u_diag_cnst / (diag_cnst - l_diag_cnst * mat_coeff(i - 1))
+       vec_coeff(i) = (vec(i) - l_diag_cnst * vec_coeff(i - 1)) / &
+            (diag_cnst - l_diag_cnst * mat_coeff(i - 1))
+    end do
+    vec_coeff(n) = (vec(n) - l_diag_cnst * vec_coeff(n - 1)) / &
+         (diag_cnst - l_diag_cnst * mat_coeff(n - 1))
+
+    ! Backward sweep
+    call tridiag_backsweep(res, mat_coeff, vec_coeff)
+
+  end subroutine tridiag_cnst
+
 end module tridiag
