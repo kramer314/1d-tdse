@@ -8,11 +8,20 @@ module output
 
   implicit none
 
+  ! Output file unit numbers
+  integer(dp), parameter :: psi_xt_unit = 99
+  integer(dp), parameter :: x_range_unit = 98
+  integer(dp), parameter :: t_range_unit = 98
+  integer(dp), parameter :: psi0_unit = 96
+  integer(dp), parameter :: pot_unit = 95
+  integer(dp), parameter :: wfunc_math_unit = 94
+
   private
   public :: output_init
   public :: output_cleanup
   public :: output_time_indep
   public :: output_time_dep
+  
 contains
 
   ! Initialize output
@@ -20,24 +29,25 @@ contains
     implicit none
 
     call files_ensure_dir(output_dir)
-
-    open(unit=1, file=trim(output_dir)//trim(psi_xt_fname))
+    if (output_psi_xt) then
+       open(unit=psi_xt_unit, file=trim(output_dir)//trim(psi_xt_fname))
+    end if
 
     if (output_grids) then
-       open(unit=2, file=trim(output_dir)//trim(x_range_fname))
-       open(unit=3, file=trim(output_dir)//trim(t_range_fname))
+       open(unit=x_range_unit, file=trim(output_dir)//trim(x_range_fname))
+       open(unit=t_range_unit, file=trim(output_dir)//trim(t_range_fname))
     end if
 
     if (output_psi0) then
-       open(unit=4, file=trim(output_dir)//trim(psi0_fname))
+       open(unit=psi0_unit, file=trim(output_dir)//trim(psi0_fname))
     end if
 
     if (output_pot) then
-       open(unit=5, file=trim(output_dir)//trim(pot_fname))
+       open(unit=pot_unit, file=trim(output_dir)//trim(pot_fname))
     end if
 
     if (output_wfunc_math) then
-       open(unit=6, file=trim(output_dir)//trim(wfunc_math_fname))
+       open(unit=wfunc_math_unit, file=trim(output_dir)//trim(wfunc_math_fname))
     end if
 
   end subroutine output_init
@@ -46,12 +56,12 @@ contains
   subroutine output_cleanup()
     implicit none
 
-    close(unit=1)
-    close(unit=2)
-    close(unit=3)
-    close(unit=4)
-    close(unit=5)
-    close(unit=6)
+    close(unit=psi_xt_unit)
+    close(unit=x_range_unit)
+    close(unit=t_range_unit)
+    close(unit=psi0_unit)
+    close(unit=pot_unit)
+    close(unit=wfunc_math_unit)
 
   end subroutine output_cleanup
 
@@ -63,15 +73,15 @@ contains
 
     do i_x = 1, n_x
        if (output_grids) then
-          write(2, dp_format) x_range(i_x)
-          write(3, dp_format) t_range(i_x)
+          write(x_range_unit, dp_format) x_range(i_x)
+          write(t_range_unit, dp_format) t_range(i_x)
        end if
        if (output_psi0) then
-          write(4, dp_format) abs(psi_arr(i_x))**2
+          write(psi0_unit, dp_format) abs(psi_arr(i_x))**2
        end if
 
        if (output_pot) then
-          write(5, dp_format) pot_arr(i_x)
+          write(pot_unit, dp_format) pot_arr(i_x)
        end if
     end do
 
@@ -85,17 +95,19 @@ contains
     integer(dp) :: i_x
     real(dp) :: norm, e_x, stdev_x
 
-    do i_x = 1, n_x
-       write(1, dp_format, advance="no") abs(psi_arr(i_x))**2
-    end do
-    write(1, *)
+    if (output_psi_xt) then
+       do i_x = 1, n_x
+          write(psi_xt_unit, dp_format, advance="no") abs(psi_arr(i_x))**2
+       end do
+       write(psi_xt_unit, *)
+    end if
 
     if (output_wfunc_math) then
        norm = numerics_norm(psi_arr)
        e_x = numerics_expec_x(psi_arr)
        stdev_x = numerics_stdev_x(psi_arr)
 
-       write(6, "(3"//dp_format_raw//")") norm, e_x, stdev_x
+       write(wfunc_math_unit, "(3"//dp_format_raw//")") norm, e_x, stdev_x
     end if
 
   end subroutine output_time_dep

@@ -24,7 +24,7 @@ module progvars
   character(120) :: x_range_fname, t_range_fname, pot_fname, psi0_fname, &
        psi_xt_fname, wfunc_math_fname
   logical :: output_grids, output_psi0, output_psixt, output_wfunc_math, &
-       output_pot
+       output_pot, output_psi_xt
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)

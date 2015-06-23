@@ -29,7 +29,7 @@ contains
 
     ! Propagation parameters
     t_min = 0.0_dp
-    t_max = 5.0_dp
+    t_max = 10.0_dp
     n_t = 1e3
     dt = (t_max - t_min) / n_t
 
@@ -51,6 +51,7 @@ contains
     output_psi0 = .true.
     output_pot = .true.
     output_wfunc_math = .true.
+    output_psi_xt = .true.
 
   end subroutine params_init
 
