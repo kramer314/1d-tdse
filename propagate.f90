@@ -10,18 +10,18 @@ module propagate
 
   complex(dp), allocatable :: exp_pot_arr(:), diag_arr(:)
   complex(dp) :: sym_cnst
-  
+
   private
   public :: propagate_init
   public :: propagate_cleanup
   public :: propagate_cn_splitop
-  
+
 contains
 
   ! Initialize propagation variables / arrays
   subroutine propagate_init()
     implicit none
-    
+
     allocate(diag_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
@@ -38,11 +38,11 @@ contains
     deallocate(diag_arr)
     deallocate(exp_pot_arr)
   end subroutine propagate_cleanup
-  
+
   ! Crank-Nicolson propagation
   subroutine propagate_cn(psi_arr)
     implicit none
-    
+
     complex(dp), intent(inout) :: psi_arr(:)
 
     ! Solve for auxillary wavefunction, then propagate
@@ -60,7 +60,7 @@ contains
 
     psi_arr(:) = exp_pot_arr(:) * psi_arr(:)
     call propagate_cn(psi_arr)
-    
+
   end subroutine propagate_cn_splitop
-  
+
 end module propagate

@@ -4,14 +4,14 @@
 ! Methods for solving tridiagonal systems
 module tridiag
   use progvars
-  
+
   implicit none
 
   private
   public :: tridiag_sym_cnst
   public :: tridiag_init
   public :: tridiag_cleanup
-  
+
 contains
 
   ! Initialize tridiagonal solver
@@ -31,7 +31,7 @@ contains
   subroutine tridiag_cleanup(mat_coeff, vec_coeff)
     implicit none
 
-    complex(dp), allocatable :: mat_coeff(:), vec_coeff(:)    
+    complex(dp), allocatable :: mat_coeff(:), vec_coeff(:)
 
     deallocate(mat_coeff)
     deallocate(vec_coeff)
@@ -47,13 +47,13 @@ contains
     integer(dp) :: i, n
 
     n = size(res)
-    
+
     res(n) = vec_coeff(n)
 
     do i = n - 1, 1, -1
        res(i) = vec_coeff(i) - mat_coeff(i) * res(i + 1)
     end do
-    
+
   end subroutine tridiag_backsweep
 
   ! Solves an n-dimensional tridiagional matrix equation A x = b, where the
@@ -86,6 +86,6 @@ contains
 
     ! Backward sweep
     call tridiag_backsweep(res, mat_coeff, vec_coeff)
-    
+
   end subroutine
 end module tridiag

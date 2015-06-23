@@ -4,7 +4,7 @@
 ! Run parameters
 module params
   use progvars
-  
+
   implicit none
 
   private
@@ -37,7 +37,7 @@ contains
     x_0 = 2.0_dp
     d_x = 1.0_dp
     k_0 = 10.0_dp
-    
+
   end subroutine params_init
 
   ! Initial wavefunction
@@ -62,5 +62,5 @@ contains
     val = 10_dp * x**2
 
   end function params_pot
-  
+
 end module params

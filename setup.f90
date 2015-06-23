@@ -38,7 +38,7 @@ contains
     call tridiag_cleanup(tridiag_mat_coeff, tridiag_vec_coeff)
 
   end subroutine setup_cleanup
-  
+
   ! Allocate arrays
   subroutine allocate_arrays()
     implicit none
@@ -54,14 +54,14 @@ contains
   ! Deallocate arrays
   subroutine deallocate_arrays()
     implicit none
-    
+
     deallocate(x_range)
     deallocate(t_range)
     deallocate(psi_arr)
     deallocate(pot_arr)
 
   end subroutine deallocate_arrays
-  
+
   ! Setup numerical grids
   subroutine setup_grids()
     implicit none
@@ -96,7 +96,7 @@ contains
        x = x_range(i_x)
        pot_arr(i_x) = params_pot(x)
     end do
-    
+
   end subroutine setup_potential
-  
+
 end module setup
