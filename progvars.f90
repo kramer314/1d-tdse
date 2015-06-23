@@ -25,6 +25,7 @@ module progvars
        psi_xt_fname, wfunc_math_fname
   logical :: output_grids, output_psi0, output_psixt, output_wfunc_math, &
        output_pot, output_psi_xt
+  integer(dp) :: print_mod_t, print_mod_x
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)

@@ -21,7 +21,7 @@ module output
   public :: output_cleanup
   public :: output_time_indep
   public :: output_time_dep
-  
+
 contains
 
   ! Initialize output
@@ -72,17 +72,24 @@ contains
     integer(dp) :: i_x
 
     do i_x = 1, n_x
-       if (output_grids) then
-          write(x_range_unit, dp_format) x_range(i_x)
-          write(t_range_unit, dp_format) t_range(i_x)
-       end if
-       if (output_psi0) then
-          write(psi0_unit, dp_format) abs(psi_arr(i_x))**2
+
+       if (mod(i_x, print_mod_x) .eq. 0) then
+
+          if (output_grids) then
+             write(x_range_unit, dp_format) x_range(i_x)
+             write(t_range_unit, dp_format) t_range(i_x)
+          end if
+
+          if (output_psi0) then
+             write(psi0_unit, dp_format) abs(psi_arr(i_x))**2
+          end if
+
+          if (output_pot) then
+             write(pot_unit, dp_format) real(pot_arr(i_x))
+          end if
+
        end if
 
-       if (output_pot) then
-          write(pot_unit, dp_format) real(pot_arr(i_x))
-       end if
     end do
 
   end subroutine output_time_indep
@@ -96,18 +103,26 @@ contains
     real(dp) :: norm, e_x, stdev_x
 
     if (output_psi_xt) then
+
        do i_x = 1, n_x
-          write(psi_xt_unit, dp_format, advance="no") abs(psi_arr(i_x))**2
+
+          if (mod(i_x, print_mod_x) .eq. 0) then
+             write(psi_xt_unit, dp_format, advance="no") abs(psi_arr(i_x))**2
+          end if
+
        end do
        write(psi_xt_unit, *)
+
     end if
 
     if (output_wfunc_math) then
+
        norm = numerics_norm(psi_arr)
        e_x = numerics_expec_x(psi_arr)
        stdev_x = numerics_stdev_x(psi_arr)
 
        write(wfunc_math_unit, "(3"//dp_format_raw//")") norm, e_x, stdev_x
+
     end if
 
   end subroutine output_time_dep

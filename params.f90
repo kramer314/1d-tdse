@@ -53,6 +53,9 @@ contains
     output_wfunc_math = .true.
     output_psi_xt = .true.
 
+    ! print_filter
+    print_mod_t = 10
+    print_mod_x = 10
   end subroutine params_init
 
   ! Initial wavefunction
