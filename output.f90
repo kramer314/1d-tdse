@@ -81,7 +81,7 @@ contains
        end if
 
        if (output_pot) then
-          write(pot_unit, dp_format) pot_arr(i_x)
+          write(pot_unit, dp_format) real(pot_arr(i_x))
        end if
     end do
 
