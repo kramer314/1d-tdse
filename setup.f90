@@ -26,7 +26,6 @@ contains
     call allocate_arrays
     call setup_grids
     call setup_psi
-    call setup_potential
     call propagate_init
     call tridiag_init(n_x, tridiag_mat_coeff, tridiag_vec_coeff)
   end subroutine setup_init
@@ -90,19 +89,5 @@ contains
     psi_arr(:) = psi0_arr(:)
 
   end subroutine setup_psi
-
-  ! Initialize potential V(x)
-  subroutine setup_potential()
-    implicit none
-
-    real(dp) :: x
-    integer(dp) :: i_x
-
-    do i_x = 1, n_x
-       x = x_range(i_x)
-       pot_arr(i_x) = params_pot(x)
-    end do
-
-  end subroutine setup_potential
 
 end module setup

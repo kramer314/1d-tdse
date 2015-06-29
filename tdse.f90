@@ -18,7 +18,7 @@ program tdse
   call output_time_dep(psi_arr)
   do i_t = 1, n_t
 
-     call propagate_cn_splitop(psi_arr)
+     call propagate_cn_splitop(psi_arr, i_t)
 
      if (mod(i_t, print_mod_t) .eq. 0) then
 

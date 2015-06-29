@@ -12,10 +12,9 @@ module output
   ! Output file unit numbers
   integer(dp), parameter :: psi_xt_unit = 99
   integer(dp), parameter :: x_range_unit = 98
-  integer(dp), parameter :: t_range_unit = 98
+  integer(dp), parameter :: t_range_unit = 97
   integer(dp), parameter :: psi0_unit = 96
-  integer(dp), parameter :: pot_unit = 95
-  integer(dp), parameter :: wfunc_math_unit = 94
+  integer(dp), parameter :: wfunc_math_unit = 95
 
   private
   public :: output_init
@@ -43,10 +42,6 @@ contains
        open(unit=psi0_unit, file=trim(output_dir)//trim(psi0_fname))
     end if
 
-    if (output_pot) then
-       open(unit=pot_unit, file=trim(output_dir)//trim(pot_fname))
-    end if
-
     if (output_wfunc_math) then
        open(unit=wfunc_math_unit, file=trim(output_dir)// &
             trim(wfunc_math_fname))
@@ -62,7 +57,6 @@ contains
     close(unit=x_range_unit)
     close(unit=t_range_unit)
     close(unit=psi0_unit)
-    close(unit=pot_unit)
     close(unit=wfunc_math_unit)
 
   end subroutine output_cleanup
@@ -84,10 +78,6 @@ contains
 
           if (output_psi0) then
              write(psi0_unit, dp_format) abs(psi_arr(i_x))**2
-          end if
-
-          if (output_pot) then
-             write(pot_unit, dp_format) real(pot_arr(i_x))
           end if
 
        end if

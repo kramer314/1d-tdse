@@ -49,7 +49,6 @@ contains
 
     output_grids = .true.
     output_psi0 = .true.
-    output_pot = .true.
     output_wfunc_math = .true.
     output_psi_xt = .true.
 
@@ -71,13 +70,14 @@ contains
   end function params_psi0
 
   ! Potential energy function (time independent)
-  complex(dp) function params_pot(x) result(val)
+  complex(dp) function params_pot(x, t) result(val)
     implicit none
     real(dp), intent(in) :: x
+    real(dp), intent(in) :: t
 
     val = 0.0_dp
 
-    val = 10_dp * x**2
+    val = 10_dp * x**2 * sin(t)
 
   end function params_pot
 
