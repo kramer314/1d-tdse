@@ -14,6 +14,8 @@ module numerics
   public :: numerics_expec_x
   public :: numerics_expec_x2
   public :: numerics_stdev_x
+  public :: numerics_autocorr
+  public :: numerics_autocorr2
 
 contains
 
@@ -91,5 +93,28 @@ contains
     val = sqrt(numerics_expec_x2(psi_arr) - numerics_expec_x(psi_arr)**2)
 
   end function numerics_stdev_x
+
+  ! Calculate autocorrelation
+  complex(dp) function numerics_autocorr(psi_arr) result(val)
+    implicit none
+
+    complex(dp), intent(in) :: psi_arr(:)
+    real(dp) :: x
+    integer(dp) :: i_x
+
+    val = 0.0_dp
+    do i_x = 1, n_x
+      x = x_range(i_x)
+      val = val + conjg(psi_arr(i_x)) * psi0_arr(i_x) * dx
+    end do
+  end function numerics_autocorr
+
+  ! Calculate norm of autocorrelation
+  real(dp) function numerics_autocorr2(psi_arr) result(val)
+    implicit none
+
+    complex(dp), intent(in) :: psi_arr(:)
+    val = abs(numerics_autocorr(psi_arr))**2
+  end function numerics_autocorr2
 
 end module numerics

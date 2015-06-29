@@ -12,6 +12,7 @@ module progvars
 
   ! Numerical constants
   real(dp), parameter :: pi = 4.0_dp * atan(1.0_dp)
+  real(dp), parameter :: tau = 2.0_dp * pi
   real(dp), parameter :: e = exp(1.0_dp)
   complex(dp), parameter :: j = (0.0_dp, 1.0_dp)
 
@@ -29,7 +30,7 @@ module progvars
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)
-  complex(dp), allocatable :: psi_arr(:), phi_arr(:), pot_arr(:)
+  complex(dp), allocatable :: psi_arr(:), psi0_arr(:), phi_arr(:), pot_arr(:)
 
   ! Work arrays for tridiagonal solver
   complex(dp), allocatable :: tridiag_mat_coeff(:), tridiag_vec_coeff(:)

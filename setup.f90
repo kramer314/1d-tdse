@@ -47,6 +47,7 @@ contains
     implicit none
 
     allocate(x_range(n_x))
+    allocate(psi0_arr(n_x))
     allocate(psi_arr(n_x))
     allocate(pot_arr(n_x))
     allocate(phi_arr(n_x))
@@ -60,6 +61,7 @@ contains
 
     deallocate(x_range)
     deallocate(t_range)
+    deallocate(psi0_arr)
     deallocate(psi_arr)
     deallocate(pot_arr)
 
@@ -83,8 +85,9 @@ contains
 
     do i_x = 1, n_x
        x = x_range(i_x)
-       psi_arr(i_x) = params_psi0(x)
+       psi0_arr(i_x) = params_psi0(x)
     end do
+    psi_arr(:) = psi0_arr(:)
 
   end subroutine setup_psi
 
