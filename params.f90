@@ -24,19 +24,19 @@ contains
     ! Grid parameters
     x_min = -10_dp
     x_max = 10_dp
-    n_x = 1e3
+    n_x = 1e4
     dx = (x_max - x_min) / n_x
 
     ! Propagation parameters
     t_min = 0.0_dp
     t_max = 10.0_dp
-    n_t = 1e3
+    n_t = 1e4
     dt = (t_max - t_min) / n_t
 
     ! psi0 parameters
     x_0 = 2.0_dp
     d_x = 1.0_dp
-    k_0 = 10.0_dp
+    k_0 = 0.0_dp
 
     ! output parameters
     output_dir = "./output/"
@@ -53,8 +53,8 @@ contains
     output_psi_xt = .true.
 
     ! print_filter
-    print_mod_t = 10
-    print_mod_x = 10
+    print_mod_t = 1e1
+    print_mod_x = 1e1
   end subroutine params_init
 
   ! Initial wavefunction
@@ -77,7 +77,7 @@ contains
 
     val = 0.0_dp
 
-    val = 10_dp * x**2 * sin(t)
+    val = 10_dp * x**2 * sin(t)**2
 
   end function params_pot
 
