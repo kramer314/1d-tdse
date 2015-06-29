@@ -4,8 +4,8 @@
 module output
   use progvars
   use files, only: files_ensure_dir
-  use numerics, only: numerics_expec_x, numerics_norm, numerics_stdev_x,&
-       numerics_autocorr2
+  use wfmath, only: wfmath_norm_x, wfmath_expec_x, wfmath_stdev_x, &
+       wfmath_autocorr_x
 
   implicit none
 
@@ -92,7 +92,8 @@ contains
 
     complex(dp), intent(in) :: psi_arr(:)
     integer(dp) :: i_x
-    real(dp) :: norm, e_x, stdev_x, autocorr
+    real(dp) :: norm, e_x, stdev_x
+    complex(dp) :: autocorr
 
     if (output_psi_xt) then
 
@@ -109,13 +110,13 @@ contains
 
     if (output_wfunc_math) then
 
-       norm = numerics_norm(psi_arr)
-       e_x = numerics_expec_x(psi_arr)
-       stdev_x = numerics_stdev_x(psi_arr)
-       autocorr = numerics_autocorr2(psi_arr)
+       norm = wfmath_norm_x(psi_arr)
+       e_x = wfmath_expec_x(psi_arr)
+       stdev_x = wfmath_stdev_x(psi_arr)
+       autocorr = wfmath_autocorr_x(psi_arr)
 
        write(wfunc_math_unit, "(4"//dp_format_raw//")") norm, e_x, stdev_x, &
-            autocorr
+            abs(autocorr)**2
 
     end if
 

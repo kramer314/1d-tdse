@@ -9,6 +9,7 @@ module setup
   use output, only: output_init, output_cleanup
   use propagate, only: propagate_init, propagate_cleanup
   use tridiag, only: tridiag_init, tridiag_cleanup
+  use wfmath, only: wfmath_init, wfmath_cleanup
 
   implicit none
 
@@ -23,6 +24,7 @@ contains
 
     call params_init
     call output_init
+    call wfmath_init
     call allocate_arrays
     call setup_grids
     call setup_psi
@@ -35,6 +37,7 @@ contains
     implicit none
 
     call output_cleanup
+    call wfmath_cleanup
     call deallocate_arrays
     call propagate_cleanup
     call tridiag_cleanup(tridiag_mat_coeff, tridiag_vec_coeff)
