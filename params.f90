@@ -20,6 +20,12 @@ contains
   ! Assign parameters
   subroutine params_init()
 
+    ! Units
+    hbar = 1.0_dp
+
+    ! Particle parameters
+    m = 1.0_dp
+
     ! Grid parameters
     x_min = -10_dp
     x_max = 10_dp

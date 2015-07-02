@@ -7,6 +7,12 @@ module progvars
 
   implicit none
 
+  ! Units
+  real(dp) :: hbar
+
+  ! Particle parameters
+  real(dp) :: m
+
   ! Grid parameters
   real(dp) :: x_min, x_max, dx, t_min, t_max, dt
   integer(dp) :: n_x, n_t

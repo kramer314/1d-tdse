@@ -23,7 +23,7 @@ module propagate
   complex(dp), allocatable :: exp_pot_arr(:)
   ! auxillary wavefunction array
   complex(dp), allocatable :: phi_arr(:)
-  ! tridiagonal matrix elements
+  ! tridiagonal matrix elements for auxillary wavefunction calculation
   complex(dp) :: sym_cnst, diag_cnst
 
 contains
@@ -34,7 +34,7 @@ contains
     allocate(phi_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
-    sym_cnst = - (j * dt) / (8.0_dp * dx**2)
+    sym_cnst = - (j * hbar**2 * dt) / (8.0_dp * m * dx**2)
     diag_cnst = (0.5_dp - 2.0_dp * sym_cnst)
 
   end subroutine propagate_init

@@ -35,7 +35,7 @@ module wfmath
   complex(dp), allocatable :: work_arr(:)
   ! Internal copy of spatial grid parameters for modularity
   real(dp), allocatable :: x_arr(:)
-  real(dp) :: dx
+  real(dp) :: dx, m, hbar
 
 contains
 
@@ -43,13 +43,15 @@ contains
   !
   ! x_range :: spatial numerical grid
   ! d_x :: grid spacing
-  subroutine wfmath_init(x_range, d_x)
+  subroutine wfmath_init(x_range, d_x, m_, h_bar)
 
-    real(dp), intent(in) :: x_range(:), d_x
+    real(dp), intent(in) :: x_range(:), d_x, m_, h_bar
     integer(dp) :: n_x
 
     n_x = size(x_range)
     dx = d_x
+    m = m_
+    hbar = h_bar
 
     allocate(x_arr(n_x))
     x_arr(:) = x_range(:)
@@ -184,8 +186,7 @@ contains
     integer(dp) :: i_x, n_x
 
     n_x = size(psi_arr)
-    ! For now, assume that hbar = 1, m = 1
-    scale = - j / 2.0_dp
+    scale = - (hbar * j) / (2.0_dp * m)
 
     call numerics_d1(psi_arr, work_arr, dx)
 

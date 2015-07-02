@@ -42,7 +42,7 @@ contains
     call setup_calc_psi0()
 
     ! Initialize program-independent modules
-    call wfmath_init(x_range, dx)
+    call wfmath_init(x_range, dx, m, hbar)
     call tridiag_init(n_x)
 
     ! Initialize program-dependent modules
