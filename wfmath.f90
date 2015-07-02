@@ -1,103 +1,171 @@
 ! Copyright (c) 2015 Alex Kramer <alkramer@phys.ksu.edu>
 ! See the LICENSE.txt file in the top-level directory of this distribution.
 
-! Wavefunction math
+! One-dimensional wavefunction math
+! Note: This is a program-independent module
 module wfmath
-  use progvars
+  use globvars, only: dp
 
   implicit none
 
   private
 
-  complex(dp), allocatable :: work_arr_x(:)
-
+  ! Generic module functions
   public :: wfmath_init
   public :: wfmath_cleanup
 
-  public :: wfmath_iprod_x
-  public :: wfmath_norm_x
+  ! Inner products and expectation values
+  public :: wfmath_iprod
+  public :: wfmath_norm
+  public :: wfmath_expec_op
+  public :: wfmath_expec_op2
+  public :: wfmath_stdev_op
+
+  ! Wrapper / helper functions
   public :: wfmath_expec_x
   public :: wfmath_stdev_x
-  public :: wfmath_autocorr_x
+
+  ! Other functions
+  public :: wfmath_autocorr
+
+  ! Private module variables
+
+  complex(dp), allocatable :: work_arr(:)
+  ! Internal copy of spatial grid parameters for modularity
+  real(dp), allocatable :: x_arr(:)
+  real(dp) :: dx
 
 contains
 
-  ! Setup wfmath work array
-  subroutine wfmath_init()
-    implicit none
+  ! Module initialization
+  !
+  ! x_range :: spatial numerical grid
+  ! d_x :: grid spacing
+  subroutine wfmath_init(x_range, d_x)
 
-    allocate(work_arr_x(n_x))
+    real(dp), intent(in) :: x_range(:), d_x
+    integer(dp) :: n_x
+
+    n_x = size(x_range)
+    dx = d_x
+
+    allocate(x_arr(n_x))
+    x_arr(:) = x_range(:)
+
+    allocate(work_arr(n_x))
+
   end subroutine wfmath_init
 
-  ! Cleanup wfmath work array
+  ! Module cleanup
   subroutine wfmath_cleanup()
-    implicit none
 
-    deallocate(work_arr_x)
+    deallocate(x_arr)
+    deallocate(work_arr)
+
   end subroutine wfmath_cleanup
 
-  ! Inner product <psi_1 | func | psi_2>
-  complex(dp) function wfmath_iprod_x(psi1_arr, func_arr, psi2_arr) result(val)
+  ! Calculate inner product <psi_1 | func | psi_2>
+  !
+  ! psi1_arr :: bra array
+  ! func_arr :: operator array
+  ! psi2_arr :: ket array
+  complex(dp) function wfmath_iprod(psi1_arr, func_arr, psi2_arr) result(val)
     implicit none
 
     complex(dp), intent(in) :: psi1_arr(:), psi2_arr(:), func_arr(:)
 
     val = sum(conjg(psi1_arr(:)) * func_arr(:) * psi2_arr(:)) * dx
 
-  end function wfmath_iprod_x
+  end function wfmath_iprod
 
-  ! ||psi||^2 = <psi | psi>
-  real(dp) function wfmath_norm_x(psi_arr) result(val)
-    implicit none
+  ! Calculate wavefunction norm ||psi||^2 = <psi | psi>
+  !
+  ! psi_arr :: ket wavefunction array
+  real(dp) function wfmath_norm(psi_arr) result(val)
 
     complex(dp), intent(in) :: psi_arr(:)
 
-    work_arr_x(:) = 1.0_dp
-    val = real(wfmath_iprod_x(psi_arr, work_arr_x, psi_arr))
+    work_arr(:) = 1.0_dp
+    val = real(wfmath_iprod(psi_arr, work_arr, psi_arr))
 
-  end function wfmath_norm_x
+  end function wfmath_norm
 
-  ! <x> = <psi | x | psi>
+  ! Calculate operator expectation value <op> = <psi | op | psi>
+  ! We assume that the operator is Hermitian, hence a real result.
+  !
+  ! psi_arr :: ket wavefunction array
+  ! op_arr :: operator array
+  real(dp) function wfmath_expec_op(psi_arr, op_arr) result(val)
+
+    complex(dp), intent(in) :: psi_arr(:), op_arr(:)
+
+    val = real(wfmath_iprod(psi_arr, op_arr, psi_arr))
+
+  end function wfmath_expec_op
+
+  ! Calculate operator squared expectation value <op^2> = <psi | op^2 | psi>
+  ! We assume that the operator is Hermitian, hence a real result.
+  !
+  ! psi_arr :: ket wavefunction array
+  ! op_arr :: operator array
+  real(dp) function wfmath_expec_op2(psi_arr, op_arr) result(val)
+
+    complex(dp), intent(in) :: psi_arr(:)
+    complex(dp), intent(in) :: op_arr(:)
+
+    work_arr(:) = op_arr(:) * op_arr(:)
+    val = real(wfmath_iprod(psi_arr, work_arr, psi_arr))
+
+  end function wfmath_expec_op2
+
+  ! Calculate operator standard deviation stdev(op) = sqrt(<op^2> - <op>^2)
+  ! We assume that the operator is Hermitian, hence a real result.
+  !
+  ! psi_arr :: ket wavefunction array
+  ! op_arr :: operator array
+  real(dp) function wfmath_stdev_op(psi_arr, op_arr) result(val)
+
+    complex(dp), intent(in) :: psi_arr(:)
+    complex(dp), intent(in) :: op_arr(:)
+    real(dp) :: expec_op, expec_op2
+
+    expec_op = wfmath_expec_op(psi_arr, op_arr)
+    expec_op2 = wfmath_expec_op2(psi_arr, op_arr)
+    val = sqrt(expec_op2 - expec_op**2)
+
+  end function wfmath_stdev_op
+
+  ! Calculate <x> = <psi | x | psi>
+  !
+  ! psi_arr :: ket wavefunction array
   real(dp) function wfmath_expec_x(psi_arr) result(val)
-    implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
-
-    work_arr_x(:) = x_range(:)
-    val = real(wfmath_iprod_x(psi_arr, work_arr_x, psi_arr))
+    val = wfmath_expec_op(psi_arr, cmplx(x_arr, kind=dp))
 
   end function wfmath_expec_x
 
-  ! <x^2> = <psi | x^2 | psi>
-  real(dp) function wfmath_expec_x2(psi_arr) result(val)
-    implicit none
+  ! Calculate stdev(x) = sqrt(<x^2> - <x>^2)
+  !
+  ! psi_arr :: ket wavefunction array
+  real(dp) function wfmath_stdev_x(psi_arr) result(val)
 
     complex(dp), intent(in) :: psi_arr(:)
-
-    work_arr_x(:) = x_range(:) * x_range(:)
-    val = real(wfmath_iprod_x(psi_arr, work_arr_x, psi_arr))
-
-  end function wfmath_expec_x2
-
-  ! stdev(x) = sqrt(<x^2> - <x>^2)
-  real function wfmath_stdev_x(psi_arr) result(val)
-    implicit none
-
-    complex(dp), intent(in) :: psi_arr(:)
-
-    val = sqrt(wfmath_expec_x2(psi_arr) - wfmath_expec_x(psi_arr)**2)
+    val = wfmath_stdev_op(psi_arr, cmplx(x_arr, kind=dp))
 
   end function wfmath_stdev_x
 
-  ! C(t) = <psi(x,t) | psi(x,0)>
-  complex(dp) function wfmath_autocorr_x(psi_arr) result(val)
-    implicit none
+  ! Calculate autocorrelation function C(t) = <psi(x,t) | psi(x,0)>
+  !
+  ! psi_arr :: ket wavefunction array psi(x,t)
+  ! psi0_arr :: initial ket wavefunction array psi(x,0)
+  complex(dp) function wfmath_autocorr(psi_arr, psi0_arr) result(val)
 
-    complex(dp), intent(in) :: psi_arr(:)
+    complex(dp), intent(in) :: psi_arr(:), psi0_arr(:)
 
-    work_arr_x(:) = 1.0_dp
-    val = wfmath_iprod_x(psi_arr, work_arr_x, psi0_arr)
+    work_arr(:) = 1.0_dp
+    val = wfmath_iprod(psi_arr, work_arr, psi0_arr)
 
-  end function wfmath_autocorr_x
+  end function wfmath_autocorr
 
 end module wfmath

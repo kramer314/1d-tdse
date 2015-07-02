@@ -19,7 +19,6 @@ contains
 
   ! Assign parameters
   subroutine params_init()
-    implicit none
 
     ! Grid parameters
     x_min = -10_dp
@@ -55,11 +54,11 @@ contains
     ! print_filter
     print_mod_t = 1e1
     print_mod_x = 1e1
+
   end subroutine params_init
 
   ! Initial wavefunction
   complex(dp) function params_psi0(x) result(val)
-    implicit none
 
     real(dp), intent(in) :: x
     real(dp) :: norm
@@ -71,7 +70,7 @@ contains
 
   ! Potential energy function (time independent)
   complex(dp) function params_pot(x, t) result(val)
-    implicit none
+
     real(dp), intent(in) :: x
     real(dp), intent(in) :: t
 

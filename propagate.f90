@@ -1,38 +1,56 @@
 ! Copyright (c) 2015 Alex Kramer <alkramer@phys.ksu.edu>
 ! See the LICENSE.txt file in the top-level directory of this distribution.
 
-! Wavefunction propagation
+! Wavefunction propagation using a three-point finite difference
+! Crank-Nicolson scheme
 module propagate
   use progvars
-  use tridiag, only: tridiag_cnst
+  use tridiag, only: tridiag_constant
   use params, only: params_pot
 
   implicit none
 
-  complex(dp), allocatable :: exp_pot_arr(:)
-  complex(dp) :: sym_cnst, diag_cnst
-
   private
+
+  ! Generic module functions
   public :: propagate_init
   public :: propagate_cleanup
+
   public :: propagate_cn_splitop
+
+  ! Private module variables
+
+  complex(dp), allocatable :: exp_pot_arr(:)
+  ! auxillary wavefunction array
+  complex(dp), allocatable :: phi_arr(:)
+  ! tridiagonal matrix elements
+  complex(dp) :: sym_cnst, diag_cnst
 
 contains
 
-  ! Initialize propagation variables / arrays
+  ! Module initialization
   subroutine propagate_init()
-    implicit none
 
+    allocate(phi_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
     sym_cnst = - (j * dt) / (8.0_dp * dx**2)
     diag_cnst = (0.5_dp - 2.0_dp * sym_cnst)
-    exp_pot_arr(:) = exp(-j * pot_arr(:) * dt)
 
   end subroutine propagate_init
 
+  ! Module cleanup
+  subroutine propagate_cleanup()
+
+    deallocate(phi_arr)
+    deallocate(exp_pot_arr)
+
+  end subroutine propagate_cleanup
+
+  ! Setup time-dependent potential propagation
+  !
+  ! i_t :: time index
   subroutine propagate_calc_pot(i_t)
-    implicit none
 
     integer(dp), intent(in) :: i_t
 
@@ -43,45 +61,38 @@ contains
 
     do i_x = 1, n_x
        x = x_range(i_x)
-       pot_arr(i_x) = params_pot(x, t)
+       exp_pot_arr(i_x) = exp(-j * params_pot(x,t) * dt)
     end do
 
-    exp_pot_arr(:) = exp(-j * pot_arr(:) * dt)
-    
   end subroutine propagate_calc_pot
 
-  ! Cleanup propagation arrays
-  subroutine propagate_cleanup()
-    implicit none
-
-    deallocate(exp_pot_arr)
-  end subroutine propagate_cleanup
-
-  ! Crank-Nicolson propagation
-  subroutine propagate_cn(psi_arr)
-    implicit none
+  ! Crank-Nicolson propagation for the kinetic energy portion of the
+  ! Hamiltonian
+  !
+  ! psi_arr :: ket wavefunction array
+  subroutine propagate_cn_ke(psi_arr)
 
     complex(dp), intent(inout) :: psi_arr(:)
 
     ! Solve for auxillary wavefunction, then propagate
-    call tridiag_cnst(diag_cnst, sym_cnst, sym_cnst, psi_arr, phi_arr, &
-         tridiag_mat_coeff, tridiag_vec_coeff)
+    call tridiag_constant(diag_cnst, sym_cnst, sym_cnst, psi_arr, phi_arr)
     psi_arr(:) = phi_arr(:) - psi_arr(:)
 
-  end subroutine propagate_cn
+  end subroutine propagate_cn_ke
 
   ! One-dimensional Crank-Nicolson split-operator propagation
+  !
+  ! psi_arr :: ket wavefunction array
+  ! i_t :: time index
   subroutine propagate_cn_splitop(psi_arr, i_t)
-    implicit none
 
     complex(dp), intent(inout) :: psi_arr(:)
     integer(dp), intent(in) :: i_t
 
     call propagate_calc_pot(i_t)
-    
     psi_arr(:) = exp_pot_arr(:) * psi_arr(:)
-    
-    call propagate_cn(psi_arr)
+
+    call propagate_cn_ke(psi_arr)
 
   end subroutine propagate_cn_splitop
 

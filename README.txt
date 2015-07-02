@@ -9,7 +9,7 @@ finite-difference Crank-Nicolson scheme.
 Dependencies
 ============
 * Fortran compiler (tested on gfortran 4.9)
-* SCons (tested on SCons 2.3
+* SCons (tested on SCons 2.3)
 
 Software Licensing
 ==================

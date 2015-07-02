@@ -1,10 +1,10 @@
 ! Copyright (c) 2015 Alex Kramer <alkramer@phys.ksu.edu>
 ! See the LICENSE.txt file in the top-level directory of this distribution.
 
-! Initialization module
+! Program initialization / cleanup module
 module setup
   use progvars
-  use params, only: params_init, params_psi0, params_pot
+  use params, only: params_init, params_psi0
   use numerics, only: numerics_linspace
   use output, only: output_init, output_cleanup
   use propagate, only: propagate_init, propagate_cleanup
@@ -14,73 +14,63 @@ module setup
   implicit none
 
   private
+
+  ! Generic module functions
   public :: setup_init
   public :: setup_cleanup
 
 contains
-  ! Public pre-execution routine
+
+  ! Module initialization
   subroutine setup_init()
-    implicit none
 
-    call params_init
-    call output_init
-    call wfmath_init
-    call allocate_arrays
-    call setup_grids
-    call setup_psi
-    call propagate_init
-    call tridiag_init(n_x, tridiag_mat_coeff, tridiag_vec_coeff)
-  end subroutine setup_init
+    ! Initialize parameters
+    call params_init()
 
-  ! Public post-execution routine
-  subroutine setup_cleanup()
-    implicit none
-
-    call output_cleanup
-    call wfmath_cleanup
-    call deallocate_arrays
-    call propagate_cleanup
-    call tridiag_cleanup(tridiag_mat_coeff, tridiag_vec_coeff)
-
-  end subroutine setup_cleanup
-
-  ! Allocate arrays
-  subroutine allocate_arrays()
-    implicit none
-
+    ! Allocate main arrays
     allocate(x_range(n_x))
     allocate(psi0_arr(n_x))
     allocate(psi_arr(n_x))
-    allocate(pot_arr(n_x))
-    allocate(phi_arr(n_x))
     allocate(t_range(n_t))
 
-  end subroutine allocate_arrays
+    ! Setup numerical grids
+    call numerics_linspace(x_min, x_max, x_range, dx)
+    call numerics_linspace(t_min, t_max, t_range, dt)
 
-  ! Deallocate arrays
-  subroutine deallocate_arrays()
-    implicit none
+    ! Setup initial wavefunction array
+    call setup_calc_psi0()
 
+    ! Initialize program-independent modules
+    call wfmath_init(x_range, dx)
+    call tridiag_init(n_x)
+
+    ! Initialize program-dependent modules
+    call propagate_init()
+    call output_init()
+
+  end subroutine setup_init
+
+  ! Module cleanup
+  subroutine setup_cleanup()
+
+    ! Deallocate main arrays
     deallocate(x_range)
     deallocate(t_range)
     deallocate(psi0_arr)
     deallocate(psi_arr)
-    deallocate(pot_arr)
 
-  end subroutine deallocate_arrays
+    ! Cleanup program-independent modules
+    call wfmath_cleanup
+    call tridiag_cleanup
 
-  ! Setup numerical grids
-  subroutine setup_grids()
-    implicit none
+    ! Cleanup program-dependent modules
+    call output_cleanup
+    call propagate_cleanup
 
-    call numerics_linspace(x_min, x_max, x_range, dx)
-    call numerics_linspace(t_min, t_max, t_range, dt)
+  end subroutine setup_cleanup
 
-  end subroutine setup_grids
-
-  ! Initialize psi(x, t = 0)
-  subroutine setup_psi()
-    implicit none
+  ! Calculate psi(x, t=0) and populate relevant arrays
+  subroutine setup_calc_psi0()
 
     real(dp) :: x
     integer(dp) :: i_x
@@ -91,6 +81,6 @@ contains
     end do
     psi_arr(:) = psi0_arr(:)
 
-  end subroutine setup_psi
+  end subroutine setup_calc_psi0
 
 end module setup

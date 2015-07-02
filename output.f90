@@ -4,10 +4,21 @@
 module output
   use progvars
   use files, only: files_ensure_dir
-  use wfmath, only: wfmath_norm_x, wfmath_expec_x, wfmath_stdev_x, &
-       wfmath_autocorr_x
+  use wfmath, only: wfmath_norm, wfmath_expec_x, wfmath_stdev_x, &
+       wfmath_autocorr
 
   implicit none
+
+  private
+
+  ! Generic module functions
+  public :: output_init
+  public :: output_cleanup
+
+  public :: output_time_indep
+  public :: output_time_dep
+
+  ! Private module variables
 
   ! Output file unit numbers
   integer(dp), parameter :: psi_xt_unit = 99
@@ -16,17 +27,10 @@ module output
   integer(dp), parameter :: psi0_unit = 96
   integer(dp), parameter :: wfunc_math_unit = 95
 
-  private
-  public :: output_init
-  public :: output_cleanup
-  public :: output_time_indep
-  public :: output_time_dep
-
 contains
 
-  ! Initialize output
+  ! Module initialization
   subroutine output_init()
-    implicit none
 
     call files_ensure_dir(output_dir)
     if (output_psi_xt) then
@@ -49,9 +53,8 @@ contains
 
   end subroutine output_init
 
-  ! Cleanup output
+  ! Module cleanup
   subroutine output_cleanup()
-    implicit none
 
     close(unit=psi_xt_unit)
     close(unit=x_range_unit)
@@ -61,9 +64,8 @@ contains
 
   end subroutine output_cleanup
 
-  ! Time independent output
+  ! Output time-independent quantities
   subroutine output_time_indep()
-    implicit none
 
     integer(dp) :: i_x
 
@@ -86,9 +88,10 @@ contains
 
   end subroutine output_time_indep
 
-  ! Time-dependent output
+  ! Output time-dependent quantities at a given propagation step
+  !
+  ! psi_arr :: wavefunction array at a particular time step
   subroutine output_time_dep(psi_arr)
-    implicit none
 
     complex(dp), intent(in) :: psi_arr(:)
     integer(dp) :: i_x
@@ -110,10 +113,11 @@ contains
 
     if (output_wfunc_math) then
 
-       norm = wfmath_norm_x(psi_arr)
+       ! Calculate and output norm, <x>, stdev(x), and autocorrelation
+       norm = wfmath_norm(psi_arr)
        e_x = wfmath_expec_x(psi_arr)
        stdev_x = wfmath_stdev_x(psi_arr)
-       autocorr = wfmath_autocorr_x(psi_arr)
+       autocorr = wfmath_autocorr(psi_arr, psi0_arr)
 
        write(wfunc_math_unit, "(4"//dp_format_raw//")") norm, e_x, stdev_x, &
             abs(autocorr)**2

@@ -1,53 +1,59 @@
 ! Copyright (c) 2015 Alex Kramer <alkramer@phys.ksu.edu>
 ! See the LICENSE.txt file in the top-level directory of this distribution
 
-! Methods for solving tridiagonal systems using the Thomas algorithm
+! Methods for solving tridiagonal systems using the Thomas algorithm (modified
+! Gaussian elimination)
+! Note: This is a program-independent module
 module tridiag
-  use progvars, only: dp
+  use globvars, only: dp
 
   implicit none
 
   private
-  public :: tridiag_general
-  public :: tridiag_cnst
+  ! Generic module functions
   public :: tridiag_init
   public :: tridiag_cleanup
 
+  public :: tridiag_general
+  public :: tridiag_constant
+
+  ! Private module variables
+
+  ! Temporary storage for Gaussian elimination coefficients
+  complex(dp), allocatable :: mat_coeff(:), vec_coeff(:)
+
 contains
 
-  ! Initialize tridiagonal solver work arrays
-  subroutine tridiag_init(n, mat_coeff, vec_coeff)
-    implicit none
+  ! Module initialization
+  !
+  ! n :: dimension of linear system
+  subroutine tridiag_init(n)
 
     integer(dp) :: n
-    complex(dp), allocatable :: mat_coeff(:), vec_coeff(:)
 
     allocate(mat_coeff(n - 1))
     allocate(vec_coeff(n))
 
   end subroutine tridiag_init
 
-  ! Cleanup tridiagonal solver work arrays
-  subroutine tridiag_cleanup(mat_coeff, vec_coeff)
-    implicit none
-
-    complex(dp), allocatable :: mat_coeff(:), vec_coeff(:)
+  ! Module cleanup
+  subroutine tridiag_cleanup()
 
     deallocate(mat_coeff)
     deallocate(vec_coeff)
 
   end subroutine tridiag_cleanup
 
-  ! General backwards sweep for Thomas algorithm
-  subroutine tridiag_backsweep(res, mat_coeff, vec_coeff)
-    implicit none
+  ! Thomas algorithm back-substitution to obtain solution from Gaussian
+  ! elimination coefficients stored in `vec_coeff(:)` and `mat_coeff(:)`
+  !
+  ! res(:) :: x (unknown), where A x = b for the linear system
+  subroutine tridiag_backsweep(res)
 
     complex(dp), intent(inout) :: res(:)
-    complex(dp), intent(in) :: mat_coeff(:), vec_coeff(:)
     integer(dp) :: i, n
 
     n = size(res)
-
     res(n) = vec_coeff(n)
 
     do i = n - 1, 1, -1
@@ -56,20 +62,23 @@ contains
 
   end subroutine tridiag_backsweep
 
-  ! Solves an n-dimensional tridiagional matrix equation A x = b.
-  subroutine tridiag_general(diag, u_diag, l_diag, vec, res, &
-       mat_coeff, vec_coeff)
-    implicit none
+  ! Solve an n-dimensional tridiagional matrix equation A x = b.
+  !
+  ! diag(:) :: main diagonal entries
+  ! u_diag(:) :: upper diagonal entries
+  ! l_diag(:) :: lower diagonal entries
+  ! vec(:) :: b (known), where A x = b for the linear system
+  ! res(:) :: x (unknown), where A x = b for the linear system
+  subroutine tridiag_general(diag, u_diag, l_diag, vec, res)
 
     complex(dp), intent(in) :: diag(:), u_diag(:), l_diag(:), vec(:)
-    complex(dp), intent(inout) :: mat_coeff(:), vec_coeff(:)
     complex(dp), intent(out) :: res(:)
 
     integer(dp) :: i, n
 
     n = size(res)
 
-    ! Forward sweep
+    ! Forward sweep to calculate Gaussian elimination coefficients
     mat_coeff(1) = u_diag(1) / diag(1)
     vec_coeff(1) = vec(1) / diag(1)
 
@@ -82,26 +91,29 @@ contains
     vec_coeff(n) = (vec(n) - l_diag(n) * vec_coeff(n - 1)) / &
          (diag(n) - l_diag(n) * mat_coeff(n - 1))
 
-    ! Backward sweep
-    call tridiag_backsweep(res, mat_coeff, vec_coeff)
+    ! Backward sweep to solve the system
+    call tridiag_backsweep(res)
 
   end subroutine tridiag_general
 
   ! Solves an n-dimensional tridiagional matrix equation A x = b, where the
   ! band elements are constant.
-  subroutine tridiag_cnst(diag_cnst, u_diag_cnst, l_diag_cnst, vec, res, &
-       mat_coeff, vec_coeff)
-    implicit none
+  !
+  ! diag_cnst :: main diagonal entry
+  ! u_diag_cnst :: upper diagonal entry
+  ! l_diag_cnst :: lower diagonal entry
+  ! vec(:) :: b (known), where A x = b for the linear system
+  ! res(:) :: x (unknown), where A x = b for the linear system
+  subroutine tridiag_constant(diag_cnst, u_diag_cnst, l_diag_cnst, vec, res)
 
     complex(dp), intent(in) :: diag_cnst, u_diag_cnst, l_diag_cnst, vec(:)
-    complex(dp), intent(inout) :: mat_coeff(:), vec_coeff(:)
     complex(dp), intent(out) :: res(:)
 
     integer(dp) :: i, n
 
     n = size(res)
 
-    ! Forward sweep
+    ! Forward sweep to calculate Gaussian elimination coefficients
     mat_coeff(1) = u_diag_cnst / diag_cnst
     vec_coeff(1) = vec(1) / diag_cnst
 
@@ -113,9 +125,9 @@ contains
     vec_coeff(n) = (vec(n) - l_diag_cnst * vec_coeff(n - 1)) / &
          (diag_cnst - l_diag_cnst * mat_coeff(n - 1))
 
-    ! Backward sweep
-    call tridiag_backsweep(res, mat_coeff, vec_coeff)
+    ! Backward sweep to solve the system
+    call tridiag_backsweep(res)
 
-  end subroutine tridiag_cnst
+  end subroutine tridiag_constant
 
 end module tridiag
