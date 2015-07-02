@@ -11,6 +11,7 @@ module numerics
   private
 
   public :: numerics_linspace
+  public :: numerics_d1
 
 contains
 
@@ -36,5 +37,32 @@ contains
     end do
 
   end subroutine numerics_linspace
+
+  ! Calculate the 1st derivative of a complex array-valued function with
+  ! respect to a real-valued coordinate.
+  !
+  ! arr :: function array
+  ! d_arr :: array to populate
+  ! dx :: coordinate spacing
+  subroutine numerics_d1(arr, d_arr, dx)
+
+    complex(dp), intent(in) :: arr(:)
+    complex(dp), intent(inout) :: d_arr(:)
+    real(dp), intent(in) :: dx
+    integer(dp) :: i_x, n_x
+    real(dp) :: scale
+
+    n_x = size(arr)
+    scale = 1.0_dp / (2.0_dp * dx)
+
+    d_arr(1) = (arr(2) - arr(1))
+    do i_x = 2, n_x - 1
+       d_arr(i_x) = (arr(i_x + 1) - arr(i_x - 1))
+    end do
+    d_arr(n_x) = (arr(n_x) - arr(n_x - 1))
+
+    d_arr(:) = scale * d_arr(:)
+
+  end subroutine numerics_d1
 
 end module numerics

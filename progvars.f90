@@ -14,13 +14,13 @@ module progvars
   ! Output parameters
   character(120) :: output_dir
   character(120) :: x_range_fname, t_range_fname, pot_fname, psi0_fname, &
-       psi_xt_fname, wfunc_math_fname
-  logical :: output_grids, output_psi0, output_psixt, output_wfunc_math, &
-       output_psi_xt
+       psi_xt_fname, flux_xt_fname, wfunc_checks_fname, autocorr_fname
+  logical :: output_grids, output_psi0, output_psi_xt, output_flux_xt, &
+       output_wfunc_checks, output_autocorr
   integer(dp) :: print_mod_t, print_mod_x
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)
-  complex(dp), allocatable :: psi_arr(:), psi0_arr(:)
+  complex(dp), allocatable :: psi_arr(:), psi0_arr(:), flux_arr(:)
 
 end module progvars

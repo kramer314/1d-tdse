@@ -31,6 +31,7 @@ contains
     allocate(x_range(n_x))
     allocate(psi0_arr(n_x))
     allocate(psi_arr(n_x))
+    allocate(flux_arr(n_x))
     allocate(t_range(n_t))
 
     ! Setup numerical grids
@@ -58,6 +59,7 @@ contains
     deallocate(t_range)
     deallocate(psi0_arr)
     deallocate(psi_arr)
+    deallocate(flux_arr)
 
     ! Cleanup program-independent modules
     call wfmath_cleanup

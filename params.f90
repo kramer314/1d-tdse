@@ -39,17 +39,20 @@ contains
 
     ! output parameters
     output_dir = "./output/"
-    x_range_fname = "xrange.dat"
-    t_range_fname = "trange.dat"
+    x_range_fname = "x_range.dat"
+    t_range_fname = "t_range.dat"
     psi0_fname = "psi0.dat"
-    pot_fname = "pot.dat"
-    wfunc_math_fname = "wfunc_math.dat"
+    wfunc_checks_fname = "wfunc_checks.dat"
     psi_xt_fname = "psi_xt.dat"
+    flux_xt_fname = "flux_xt.dat"
+    autocorr_fname = "autocorr.dat"
 
     output_grids = .true.
     output_psi0 = .true.
-    output_wfunc_math = .true.
     output_psi_xt = .true.
+    output_flux_xt = .true.
+    output_autocorr = .true.
+    output_wfunc_checks = .true.
 
     ! print_filter
     print_mod_t = 1e1

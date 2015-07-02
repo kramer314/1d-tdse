@@ -4,7 +4,8 @@
 ! One-dimensional wavefunction math
 ! Note: This is a program-independent module
 module wfmath
-  use globvars, only: dp
+  use globvars, only: dp, j
+  use numerics, only: numerics_d1
 
   implicit none
 
@@ -27,6 +28,7 @@ module wfmath
 
   ! Other functions
   public :: wfmath_autocorr
+  public :: wfmath_prob_flux
 
   ! Private module variables
 
@@ -167,5 +169,29 @@ contains
     val = wfmath_iprod(psi_arr, work_arr, psi0_arr)
 
   end function wfmath_autocorr
+
+  ! Calculate the probability current
+  ! j(t) = - (hbar j / 2m) (psi* dpsi/dx - psi dpsi*/dx)
+  !
+  ! psi_arr :: ket wavefunction array psi(x,t)
+  ! flux_arr :: flux array to populate.
+  subroutine wfmath_prob_flux(psi_arr, flux_arr)
+
+    complex(dp), intent(in) :: psi_arr(:)
+    complex(dp), intent(inout) :: flux_arr(:)
+
+    complex(dp) :: scale, pdp
+    integer(dp) :: i_x, n_x
+
+    n_x = size(psi_arr)
+    ! For now, assume that hbar = 1, m = 1
+    scale = - j / 2.0_dp
+
+    call numerics_d1(psi_arr, work_arr, dx)
+
+    flux_arr(:) = scale * (conjg(psi_arr(:)) * work_arr(:) - &
+         psi_arr(:) * conjg(work_arr(:)))
+
+  end subroutine wfmath_prob_flux
 
 end module wfmath
