@@ -12,6 +12,10 @@ module params
   public :: params_psi0
   public :: params_pot
 
+  public :: in_propagate
+  public :: pre_propagate
+  public :: post_propagate
+
   ! Problem specific variables
   real(dp) :: x_0, d_x, k_0
 
@@ -88,5 +92,17 @@ contains
     val = 10_dp * x**2 * sin(t)**2
 
   end function params_pot
+
+  ! In-propagate subroutine called after every propagation step
+  subroutine in_propagate()
+  end subroutine in_propagate
+
+  ! Pre-propagation subroutine called before propagation
+  subroutine pre_propagate()
+  end subroutine pre_propagate
+
+  ! Post-propagation subroutine called after propagation
+  subroutine post_propagate()
+  end subroutine post_propagate
 
 end module params
