@@ -13,6 +13,7 @@ module numerics
   public :: numerics_linspace
   public :: numerics_d1
   public :: numerics_d2
+  public :: numerics_rk4
 
 contains
 
@@ -114,5 +115,43 @@ contains
     d2_arr(:) = scale * d2_arr(:)
 
   end subroutine numerics_d2
+
+
+  ! 4th order Runge-Kutta propagator for the first order system of differential
+  ! equations dy/dt = f(t, y)
+  !
+  ! f :: differential equation dy/dt = f(y, t) that returns values of the same
+  !   dimension as y
+  ! y :: current state array
+  ! t :: current time parameter
+  ! dt :: time step
+  !
+  ! Note that the state array is overwritten during propagation.
+  subroutine numerics_rk4(f, y, t, dt)
+    complex(dp), intent(inout) :: y(:)
+    real(dp), intent(in) :: t
+    real(dp), intent(in) :: dt
+
+    complex(dp), dimension(size(y)) :: k1, k2, k3, k4
+
+    ! Explicit interface for external differential equation system
+    interface
+
+       function f(y, t) result(val)
+         import dp
+         real(dp) :: t
+         complex(dp) :: y(:), val(size(y))
+       end function f
+
+    end interface
+
+    k1 = f(y, t)
+    k2 = f(y + dt / 2 * k1, t + dt / 2)
+    k3 = f(y + dt / 2 * k2, t + dt / 2)
+    k4 = f(y + dt * k3, t + dt)
+
+    y = y + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+
+  end subroutine numerics_rk4
 
 end module numerics
