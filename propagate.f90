@@ -39,6 +39,7 @@ contains
 
   end subroutine propagate_init
 
+  
   ! Module cleanup
   subroutine propagate_cleanup()
 
@@ -47,6 +48,7 @@ contains
 
   end subroutine propagate_cleanup
 
+  
   ! Setup time-dependent potential propagation
   !
   ! i_t :: time index
@@ -66,6 +68,7 @@ contains
 
   end subroutine propagate_calc_pot
 
+  
   ! Crank-Nicolson propagation for the kinetic energy portion of the
   ! Hamiltonian
   !
@@ -80,6 +83,7 @@ contains
 
   end subroutine propagate_cn_ke
 
+  
   ! One-dimensional Crank-Nicolson split-operator propagation
   !
   ! psi_arr :: ket wavefunction array

@@ -70,6 +70,7 @@ contains
 
   end subroutine params_init
 
+
   ! Initial wavefunction
   complex(dp) function params_psi0(x) result(val)
 
@@ -80,6 +81,7 @@ contains
     val = norm * exp(-0.5_dp * ((x - x_0) / d_x)**2) * exp(j * k_0 * x)
 
   end function params_psi0
+
 
   ! Potential energy function (time independent)
   complex(dp) function params_pot(x, t) result(val)
@@ -93,13 +95,16 @@ contains
 
   end function params_pot
 
+
   ! In-propagate subroutine called after every propagation step
   subroutine in_propagate()
   end subroutine in_propagate
 
+
   ! Pre-propagation subroutine called before propagation
   subroutine pre_propagate()
   end subroutine pre_propagate
+
 
   ! Post-propagation subroutine called after propagation
   subroutine post_propagate()

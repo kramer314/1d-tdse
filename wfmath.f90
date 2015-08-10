@@ -60,6 +60,7 @@ contains
 
   end subroutine wfmath_init
 
+
   ! Module cleanup
   subroutine wfmath_cleanup()
 
@@ -67,6 +68,7 @@ contains
     deallocate(work_arr)
 
   end subroutine wfmath_cleanup
+
 
   ! Calculate inner product <psi_1 | func | psi_2>
   !
@@ -82,6 +84,7 @@ contains
 
   end function wfmath_iprod
 
+
   ! Calculate wavefunction norm ||psi||^2 = <psi | psi>
   !
   ! psi_arr :: ket wavefunction array
@@ -93,6 +96,7 @@ contains
     val = real(wfmath_iprod(psi_arr, work_arr, psi_arr))
 
   end function wfmath_norm
+
 
   ! Calculate operator expectation value <op> = <psi | op | psi>
   ! We assume that the operator is Hermitian, hence a real result.
@@ -106,6 +110,7 @@ contains
     val = real(wfmath_iprod(psi_arr, op_arr, psi_arr))
 
   end function wfmath_expec_op
+
 
   ! Calculate operator squared expectation value <op^2> = <psi | op^2 | psi>
   ! We assume that the operator is Hermitian, hence a real result.
@@ -121,6 +126,7 @@ contains
     val = real(wfmath_iprod(psi_arr, work_arr, psi_arr))
 
   end function wfmath_expec_op2
+
 
   ! Calculate operator standard deviation stdev(op) = sqrt(<op^2> - <op>^2)
   ! We assume that the operator is Hermitian, hence a real result.
@@ -139,6 +145,7 @@ contains
 
   end function wfmath_stdev_op
 
+
   ! Calculate <x> = <psi | x | psi>
   !
   ! psi_arr :: ket wavefunction array
@@ -149,6 +156,7 @@ contains
 
   end function wfmath_expec_x
 
+
   ! Calculate stdev(x) = sqrt(<x^2> - <x>^2)
   !
   ! psi_arr :: ket wavefunction array
@@ -158,6 +166,7 @@ contains
     val = wfmath_stdev_op(psi_arr, cmplx(x_arr, kind=dp))
 
   end function wfmath_stdev_x
+
 
   ! Calculate autocorrelation function C(t) = <psi(x,t) | psi(x,0)>
   !
@@ -171,6 +180,7 @@ contains
     val = wfmath_iprod(psi_arr, work_arr, psi0_arr)
 
   end function wfmath_autocorr
+
 
   ! Calculate the probability current
   ! j(t) = - (hbar j / 2m) (psi* dpsi/dx - psi dpsi*/dx)

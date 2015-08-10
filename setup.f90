@@ -51,6 +51,7 @@ contains
 
   end subroutine setup_init
 
+
   ! Module cleanup
   subroutine setup_cleanup()
 
@@ -70,6 +71,7 @@ contains
     call propagate_cleanup
 
   end subroutine setup_cleanup
+
 
   ! Calculate psi(x, t=0) and populate relevant arrays
   subroutine setup_calc_psi0()

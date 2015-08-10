@@ -64,6 +64,7 @@ contains
 
   end subroutine output_init
 
+
   ! Module cleanup
   subroutine output_cleanup()
 
@@ -76,6 +77,7 @@ contains
     close(unit=psi0_unit)
 
   end subroutine output_cleanup
+
 
   ! Output time-independent quantities
   subroutine output_time_indep()
@@ -100,6 +102,7 @@ contains
     end do
 
   end subroutine output_time_indep
+
 
   ! Output time-dependent quantities at a given propagation step
   !

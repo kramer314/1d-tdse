@@ -39,6 +39,7 @@ contains
 
   end subroutine numerics_linspace
 
+
   ! Calculate the 1st derivative of a complex array-valued function with
   ! respect to a real-valued coordinate with constant spacing:
   !

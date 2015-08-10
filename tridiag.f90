@@ -36,6 +36,7 @@ contains
 
   end subroutine tridiag_init
 
+
   ! Module cleanup
   subroutine tridiag_cleanup()
 
@@ -43,6 +44,7 @@ contains
     deallocate(vec_coeff)
 
   end subroutine tridiag_cleanup
+
 
   ! Thomas algorithm back-substitution to obtain solution from Gaussian
   ! elimination coefficients stored in `vec_coeff(:)` and `mat_coeff(:)`
@@ -61,6 +63,7 @@ contains
     end do
 
   end subroutine tridiag_backsweep
+
 
   ! Solve an n-dimensional tridiagional matrix equation A x = b.
   !
@@ -95,6 +98,7 @@ contains
     call tridiag_backsweep(res)
 
   end subroutine tridiag_general
+
 
   ! Solves an n-dimensional tridiagional matrix equation A x = b, where the
   ! band elements are constant.
