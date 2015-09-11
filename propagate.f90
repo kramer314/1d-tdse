@@ -21,6 +21,8 @@ module propagate
   ! Private module variables
 
   complex(dp), allocatable :: exp_pot_arr(:)
+  complex(dp), allocatable :: old_pot_arr(:)
+
   ! auxillary wavefunction array
   complex(dp), allocatable :: phi_arr(:)
   ! tridiagonal matrix elements for auxillary wavefunction calculation
@@ -34,21 +36,27 @@ contains
     allocate(phi_arr(n_x))
     allocate(exp_pot_arr(n_x))
 
+    allocate(old_pot_arr(n_x))
+
+    ! Ensures the potential is calculated correctly for the first timestep
+    old_pot_arr = 1.0_dp
+
     sym_cnst = - (j * hbar**2 * dt) / (8.0_dp * m * dx**2)
     diag_cnst = (0.5_dp - 2.0_dp * sym_cnst)
 
   end subroutine propagate_init
 
-  
+
   ! Module cleanup
   subroutine propagate_cleanup()
 
     deallocate(phi_arr)
     deallocate(exp_pot_arr)
+    deallocate(old_pot_arr)
 
   end subroutine propagate_cleanup
 
-  
+
   ! Setup time-dependent potential propagation
   !
   ! i_t :: time index
@@ -56,19 +64,28 @@ contains
 
     integer(dp), intent(in) :: i_t
 
-    real(dp) :: x, t
+    real(dp) :: x, t, pot_xt
     integer(dp) :: i_x
 
     t = t_range(i_t)
 
     do i_x = 1, n_x
        x = x_range(i_x)
-       exp_pot_arr(i_x) = exp(-j * params_pot(x,t) * dt)
+
+       pot_xt = params_pot(x, t)
+
+       ! Calculating exp(-j V_xt dt) is expensive; we should only update it
+       ! as needed.
+       if (abs((pot_xt - old_pot_arr(i_x))) .ge. eps_dp) then
+          exp_pot_arr(i_x) = exp(-j * pot_xt * dt)
+          old_pot_arr(i_x) = pot_xt
+       end if
+
     end do
 
   end subroutine propagate_calc_pot
 
-  
+
   ! Crank-Nicolson propagation for the kinetic energy portion of the
   ! Hamiltonian
   !
@@ -83,7 +100,7 @@ contains
 
   end subroutine propagate_cn_ke
 
-  
+
   ! One-dimensional Crank-Nicolson split-operator propagation
   !
   ! psi_arr :: ket wavefunction array

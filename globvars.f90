@@ -8,6 +8,7 @@ module globvars
 
   ! Double precision type / formatting
   integer, parameter :: dp = kind(0.d0)
+  real(dp), parameter :: eps_dp = epsilon(1.0_dp)
   character(*), parameter :: dp_format = "(es25.16e3)"
   character(*), parameter :: dp_format_raw = "es25.16e3"
 
