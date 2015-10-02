@@ -33,13 +33,13 @@ contains
     ! Grid parameters
     x_min = -10_dp
     x_max = 10_dp
-    n_x = 1e4
+    n_x = int(1e4)
     dx = (x_max - x_min) / n_x
 
     ! Propagation parameters
     t_min = 0.0_dp
     t_max = 10.0_dp
-    n_t = 1e4
+    n_t = int(1e4)
     dt = (t_max - t_min) / n_t
 
     ! psi0 parameters
@@ -65,8 +65,8 @@ contains
     output_wfunc_checks = .true.
 
     ! print_filter
-    print_mod_t = 1e1
-    print_mod_x = 1e1
+    print_mod_t = int(1e1)
+    print_mod_x = int(1e1)
 
   end subroutine params_init
 
@@ -91,7 +91,9 @@ contains
 
     val = 0.0_dp
 
-    val = 10_dp * x**2 * sin(t)**2
+    if (t .le. t_max / 2) then
+       val = 10_dp * x**2 * sin(t)**2
+    end if
 
   end function params_pot
 
