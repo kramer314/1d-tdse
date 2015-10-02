@@ -192,10 +192,8 @@ contains
     complex(dp), intent(in) :: psi_arr(:)
     complex(dp), intent(inout) :: flux_arr(:)
 
-    complex(dp) :: scale, pdp
-    integer(dp) :: i_x, n_x
+    complex(dp) :: scale
 
-    n_x = size(psi_arr)
     scale = - (hbar * j) / (2.0_dp * m)
 
     call numerics_d1(psi_arr, work_arr, dx)

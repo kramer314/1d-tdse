@@ -3,7 +3,7 @@
 
 import glob
 
-env = Environment(LINK="gfortran", F90FLAGS="-O3")
+env = Environment(LINK="gfortran", F90FLAGS="-O3 -ffast-math -g -Wall")
 sources = glob.glob("*.f90")
 
 env.Program("tdse.x", sources)

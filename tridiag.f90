@@ -121,11 +121,12 @@ contains
     mat_coeff(1) = u_diag_cnst / diag_cnst
     vec_coeff(1) = vec(1) / diag_cnst
 
-    do i = 2, n -1
+    do i = 2, n - 1
        mat_coeff(i) = u_diag_cnst / (diag_cnst - l_diag_cnst * mat_coeff(i - 1))
        vec_coeff(i) = (vec(i) - l_diag_cnst * vec_coeff(i - 1)) / &
             (diag_cnst - l_diag_cnst * mat_coeff(i - 1))
     end do
+
     vec_coeff(n) = (vec(n) - l_diag_cnst * vec_coeff(n - 1)) / &
          (diag_cnst - l_diag_cnst * mat_coeff(n - 1))
 

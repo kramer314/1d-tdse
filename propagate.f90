@@ -64,8 +64,9 @@ contains
 
     integer(dp), intent(in) :: i_t
 
-    real(dp) :: x, t, pot_xt
+    real(dp) :: x, t
     integer(dp) :: i_x
+    complex(dp) :: pot_xt
 
     t = t_range(i_t)
 
