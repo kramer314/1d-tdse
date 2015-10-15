@@ -77,7 +77,7 @@ contains
   subroutine setup_calc_psi0()
 
     real(dp) :: x
-    integer(dp) :: i_x
+    integer :: i_x
 
     do i_x = 1, n_x
        x = x_range(i_x)

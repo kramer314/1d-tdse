@@ -15,7 +15,7 @@ module progvars
 
   ! Grid parameters
   real(dp) :: x_min, x_max, dx, t_min, t_max, dt
-  integer(dp) :: n_x, n_t
+  integer :: n_x, n_t
 
   ! Output parameters
   character(120) :: output_dir
@@ -23,7 +23,7 @@ module progvars
        psi_xt_fname, flux_xt_fname, wfunc_checks_fname, autocorr_fname
   logical :: output_grids, output_psi0, output_psi_xt, output_flux_xt, &
        output_wfunc_checks, output_autocorr
-  integer(dp) :: print_mod_t, print_mod_x
+  integer :: print_mod_t, print_mod_x
 
   ! Arrays
   real(dp), allocatable :: x_range(:), t_range(:)

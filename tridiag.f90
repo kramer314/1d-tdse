@@ -29,7 +29,7 @@ contains
   ! n :: dimension of linear system
   subroutine tridiag_init(n)
 
-    integer(dp) :: n
+    integer :: n
 
     allocate(mat_coeff(n - 1))
     allocate(vec_coeff(n))
@@ -53,7 +53,7 @@ contains
   subroutine tridiag_backsweep(res)
 
     complex(dp), intent(inout) :: res(:)
-    integer(dp) :: i, n
+    integer :: i, n
 
     n = size(res)
     res(n) = vec_coeff(n)
@@ -77,7 +77,7 @@ contains
     complex(dp), intent(in) :: diag(:), u_diag(:), l_diag(:), vec(:)
     complex(dp), intent(out) :: res(:)
 
-    integer(dp) :: i, n
+    integer :: i, n
 
     n = size(res)
 
@@ -113,7 +113,7 @@ contains
     complex(dp), intent(in) :: diag_cnst, u_diag_cnst, l_diag_cnst, vec(:)
     complex(dp), intent(out) :: res(:)
 
-    integer(dp) :: i, n
+    integer :: i, n
 
     n = size(res)
 

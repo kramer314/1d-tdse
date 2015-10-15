@@ -29,7 +29,7 @@ contains
     real(dp), intent(out) :: x_arr(:)
     real(dp), intent(out) :: dx
 
-    integer(dp) :: i_x, n_x
+    integer :: i_x, n_x
 
     n_x = size(x_arr)
     dx = (x_max - x_min) / n_x
@@ -54,7 +54,7 @@ contains
     complex(dp), intent(in) :: arr(:)
     complex(dp), intent(inout) :: d_arr(:)
     real(dp), intent(in) :: dx
-    integer(dp) :: i_x, n_x
+    integer :: i_x, n_x
     real(dp) :: scale
 
     n_x = size(arr)
@@ -92,7 +92,7 @@ contains
     complex(dp), intent(in) :: arr(:)
     complex(dp), intent(inout) :: d2_arr(:)
     real(dp), intent(in) :: dx
-    integer(dp) :: i_x, n_x
+    integer :: i_x, n_x
     real(dp) :: scale
 
     n_x = size(arr)

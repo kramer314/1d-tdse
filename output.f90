@@ -21,14 +21,14 @@ module output
   ! Private module variables
 
   ! Output file unit numbers
-  integer(dp), parameter :: psi_xt_unit = 99
-  integer(dp), parameter :: flux_xt_unit = 98
-  integer(dp), parameter :: autocorr_unit = 97
-  integer(dp), parameter :: wfunc_checks_unit = 96
+  integer, parameter :: psi_xt_unit = 99
+  integer, parameter :: flux_xt_unit = 98
+  integer, parameter :: autocorr_unit = 97
+  integer, parameter :: wfunc_checks_unit = 96
 
-  integer(dp), parameter :: x_range_unit = 89
-  integer(dp), parameter :: t_range_unit = 88
-  integer(dp), parameter :: psi0_unit = 87
+  integer, parameter :: x_range_unit = 89
+  integer, parameter :: t_range_unit = 88
+  integer, parameter :: psi0_unit = 87
 
 contains
 
@@ -82,7 +82,7 @@ contains
   ! Output time-independent quantities
   subroutine output_time_indep()
 
-    integer(dp) :: i_x
+    integer :: i_x
 
     do i_x = 1, n_x
 
@@ -110,7 +110,7 @@ contains
   subroutine output_time_dep(psi_arr)
 
     complex(dp), intent(in) :: psi_arr(:)
-    integer(dp) :: i_x
+    integer :: i_x
     real(dp) :: norm, expec_x, stdev_x
     complex(dp) :: autocorr
 

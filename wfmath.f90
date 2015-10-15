@@ -46,7 +46,7 @@ contains
   subroutine wfmath_init(x_range, d_x, m_, h_bar)
 
     real(dp), intent(in) :: x_range(:), d_x, m_, h_bar
-    integer(dp) :: n_x
+    integer :: n_x
 
     n_x = size(x_range)
     dx = d_x

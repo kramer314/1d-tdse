@@ -10,7 +10,7 @@ program tdse
 
   implicit none
 
-  integer(dp) :: i_t
+  integer :: i_t
 
   call setup_init()
 

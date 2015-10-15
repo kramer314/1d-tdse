@@ -62,10 +62,10 @@ contains
   ! i_t :: time index
   subroutine propagate_calc_pot(i_t)
 
-    integer(dp), intent(in) :: i_t
+    integer, intent(in) :: i_t
 
     real(dp) :: x, t
-    integer(dp) :: i_x
+    integer :: i_x
     complex(dp) :: pot_xt
 
     t = t_range(i_t)
@@ -109,7 +109,7 @@ contains
   subroutine propagate_cn_splitop(psi_arr, i_t)
 
     complex(dp), intent(inout) :: psi_arr(:)
-    integer(dp), intent(in) :: i_t
+    integer, intent(in) :: i_t
 
     call propagate_calc_pot(i_t)
     psi_arr(:) = exp_pot_arr(:) * psi_arr(:)
